@@ -51,4 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)StashClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Workers\HttpCommunicationWorker.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)README.md" />
+  </ItemGroup>
 </Project>
