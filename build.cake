@@ -16,6 +16,8 @@ var nugetApiKey = Argument<string>("nugetApiKey", "");
 // Define directories.
 var mainSln = "./Atlassian.Stash.sln";
 
+var netCoreProj = "./src/Atlassian.Stash.NetCore/project.json";
+
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
@@ -41,6 +43,12 @@ Task("Build")
             Configuration = configuration,
             Verbosity = msBuildVerbosity,
         });
+
+		DotNetCoreBuild(netCoreProj, new DotNetCoreBuildSettings 
+		{
+			Configuration = configuration,
+		});
+
     }
     else
     {
@@ -59,17 +67,20 @@ Task("Run-Unit-Tests")
 Task("Prepare-NuGet-Package")
     .IsDependentOn("Run-Unit-Tests")
     .Does(() =>
-{
+{ 
     var net40Files = GetFiles("./src/Atlassian.Stash.Net40/bin/" + configuration + "/Atlassian.Stash.*");
     var net45Files = GetFiles("./src/Atlassian.Stash.Net45/bin/" + configuration + "/Atlassian.Stash.*");
+    var netCoreFiles = GetFiles("./src/Atlassian.Stash.NetCore/bin/" + configuration + "/**/Atlassian.Stash.*");
 
     CleanDirectory("./buildOutput/");
 
     CreateDirectory("./buildOutput/lib/net40/");
     CreateDirectory("./buildOutput/lib/net45/");
+    CreateDirectory("./buildOutput/lib/netstandard1.6/");
 
     CopyFiles(net40Files, "./buildOutput/lib/net40/");
     CopyFiles(net45Files, "./buildOutput/lib/net45/");
+    CopyFiles(netCoreFiles, "./buildOutput/lib/netstandard1.6/");
 
     CopyFileToDirectory("./.nuspec/Atlassian.Stash.nuspec", "./buildOutput/");
 });
